@@ -1,0 +1,75 @@
+services:
+  - type: web
+    name: web3-wallet-monitor
+    env: node
+    branch: main
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: REDIS_URL
+        fromService:
+          name: wallet-monitor-redis
+          type: redis
+          property: connectionString
+      - key: INFURA_PROJECT_ID
+        sync: false
+      - key: ALERT_WEBHOOK_URL
+        sync: false
+
+  - type: redis
+    name: wallet-monitor-redis
+    ipAllowList: []
+    plan: free
+```
+
+4. Update package.json
+```json
+{
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "ethers": "^5.7.2",
+    "axios": "^1.4.0",
+    "ioredis": "^5.3.2"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.5",
+    "ts-node": "^10.9.1",
+    "@types/node": "^18.15.11"
+  }
+}
+```
+
+5. Deployment Steps
+1. Create a GitHub repository for your project
+2. Push your code to the repository
+3. Sign up on Render.com
+4. Connect your GitHub account
+5. Create a new Web Service
+   - Select your repository
+   - Use the render.yaml configuration
+6. Add environment variables in Render dashboard
+
+Pros of Render:
+- Free tier for web services
+- Simple deployment
+- Integrated Redis option
+- Automatic deployments from GitHub
+- Free SSL certificates
+
+Considerations:
+- Free tier has limited runtime hours
+- Automatic sleeping for inactive services
+- Cold starts possible
+
+Recommended Optimizations:
+- Use an uptime monitoring service
+- Implement efficient error handling
+- Add logging mechanisms
+
+Would you like me to elaborate on any of these deployment steps or help you configure the specific monitoring logic?
